@@ -31,6 +31,7 @@ git clone https://github.com/MahmoudAbdullh/e2e-app.git
 2. using your terminal to Run: 
 
 ```sh
+cd e2e-app
 docker-compose up -d
 ```
 
