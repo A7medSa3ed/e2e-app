@@ -20,6 +20,11 @@ a database to store the data.
 - [Docker] - a software platform that simplifies the process of building, running, managing and distributing applications.
 - [Docker-compose] - config multiple container using docker-compose.yml file
 
+## pre-requests
+
+* [download Docker](https://www.docker.com/get-started/)
+
+
 ## Installation
 
 1. clone repo 
@@ -33,6 +38,11 @@ git clone https://github.com/MahmoudAbdullh/e2e-app.git
 ```sh
 cd e2e-app
 docker-compose up -d
+```
+
+3. now open below url in your browser:
+```sh
+http://localhost:8080
 ```
 
 # Enjoy ✌
