@@ -1,11 +1,15 @@
-import { Breadcrumb, Layout, Menu } from "antd";
 import React from "react";
+import { Link } from "react-router-dom";
+import { Layout } from "antd";
+
 const { Header, Content, Footer } = Layout;
 
 const CustomLayout = (props) => (
   <Layout className="layout">
     <Header className="header">
-      <div className="logo">E2E App</div>
+      <Link to="/" className="logo">
+        E2E App
+      </Link>
     </Header>
     <Content>
       <div className="site-layout-content">{props.children}</div>
@@ -15,7 +19,7 @@ const CustomLayout = (props) => (
         textAlign: "center",
       }}
     >
-      Ant Design ©{new Date().getFullYear()} Created by Mahmoud A.tomy
+      E2E App ©{new Date().getFullYear()} Created by Mahmoud A.tomy
     </Footer>
   </Layout>
 );

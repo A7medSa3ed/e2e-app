@@ -1,10 +1,51 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { Button, Form, Input, Row, Col, message } from "antd";
+//
 import Layout from "../../components/Layout";
+import { getUserById, createUser, updateUser } from "../../services/users";
 
-import { Button, Form, Input, Row, Col } from "antd";
 function UserForm() {
+  const [form] = Form.useForm();
+  const navigator = useNavigate();
+  const location = useLocation();
+  const { id } = useParams();
+
+  const editMode = location.pathname?.includes("edit");
+  useEffect(() => {
+    if (editMode) {
+      getUserById(id)
+        .then((data) => {
+          form.setFieldsValue(data);
+        })
+        .catch(() => {
+          message.error("user not found");
+          navigator("/");
+        });
+    }
+    return () => {};
+  }, [editMode]);
+
   const onFinish = (values) => {
-    console.log("Success:", values);
+    if (editMode) {
+      updateUser(id, values)
+        .then(() => {
+          message.success("new user updated successfully!");
+          navigator("/");
+        })
+        .catch(() => {
+          message.error("failed to update new user!");
+        });
+    } else {
+      createUser(values)
+        .then(() => {
+          message.success("new user added successfully!");
+          navigator("/");
+        })
+        .catch(() => {
+          message.error("failed to add new user!");
+        });
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -13,32 +54,63 @@ function UserForm() {
   return (
     <Layout>
       <Row justify="center">
-        <Col xl={12}>
+        <Col span={24} xl={12}>
           <Form
+            form={form}
             layout="vertical"
-            name="user-form"
+            name="basic"
             initialValues={{}}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
+            autoComplete="off"
           >
-            <Form.Item label="User Name" required>
-              <Input placeholder="user name" />
-            </Form.Item>
             <Form.Item
-              label="Email"
+              label="name"
+              name="name"
               rules={[
                 {
-                  type: "email",
                   required: true,
+                  message: "Please input your name!",
                 },
               ]}
             >
-              <Input placeholder="email" />
+              <Input />
             </Form.Item>
-            <Form.Item label="age">
-              <Input type="number" placeholder="age" />
+            <Form.Item
+              label="email"
+              name="email"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your email!",
+                },
+                {
+                  type: "email",
+                  message: "Invalid email!",
+                },
+              ]}
+            >
+              <Input />
             </Form.Item>
-            <Form.Item>
+            <Form.Item
+              label="phone"
+              name="phone"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your phone!",
+                },
+              ]}
+            >
+              <Input type="number" />
+            </Form.Item>
+
+            <Form.Item
+              wrapperCol={{
+                offset: 8,
+                span: 16,
+              }}
+            >
               <Button type="primary" htmlType="submit">
                 Submit
               </Button>

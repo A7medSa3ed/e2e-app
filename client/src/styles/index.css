@@ -5,6 +5,6 @@
     color: #FFF;
 }
 .ant-layout .ant-layout-content{
-    height: calc(100vh - 70px);
+    height: calc(100vh - 70px - 64px);
     padding: 50px;
 }

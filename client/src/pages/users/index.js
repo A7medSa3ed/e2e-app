@@ -1,73 +1,109 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
-import { Space, Table, Row, Col, Button } from "antd";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Space, Table, Row, Col, Button, Popconfirm, message } from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 //
 import Layout from "../../components/Layout";
+//
+import { getAllUsers, deleteUser } from "../../services/users";
 
-const columns = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-    render: (text, row) => <Link to={`/edit/${row.id}`}>{text}</Link>,
-  },
-  {
-    title: "email",
-    dataIndex: "email",
-    key: "email",
-  },
-  {
-    title: "phone",
-    dataIndex: "phone",
-    key: "phone",
-  },
-  {
-    title: "Action",
-    key: "action",
-    render: (_, record) => (
-      <Space size="middle">
-        <a>Invite {record.name}</a>
-        <a>Delete</a>
-      </Space>
-    ),
-  },
-];
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-];
+const UsersListingPage = () => {
+  const navigator = useNavigate();
 
-const UsersListingPage = () => (
-  <Layout>
-    <Row justify="end" style={{ marginBottom: 10 }}>
-      <Col>
-        <Button type="primary" block>
-          <Link to="/add">Add User</Link>
-        </Button>
-      </Col>
-    </Row>
-    <Table columns={columns} dataSource={data} pagination={false} />
-  </Layout>
-);
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const loadData = () => {
+    setIsLoading(true);
+    getAllUsers()
+      .then((response) => {
+        setIsLoading(false);
+        setData(response);
+      })
+      .catch((e) => {
+        setIsLoading(false);
+        message.error("unexpected error!");
+      });
+  };
+  useEffect(() => {
+    loadData();
+    return () => {};
+  }, []);
+
+  const handleConfirmDelete = (id) => {
+    deleteUser(id)
+      .then(() => {
+        message.success("deleted succesfully!");
+        loadData();
+      })
+      .catch(() => {
+        message.error("failed to delete!");
+      });
+  };
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      render: (text, row) => <Link to={`/edit/${row.id}`}>{text}</Link>,
+    },
+    {
+      title: "email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle" align="center">
+          <Button
+            type="primary"
+            shape="round"
+            icon={<EditOutlined />}
+            onClick={() => {
+              navigator(`/edit/${record.id}`);
+            }}
+          />
+          <Popconfirm
+            placement="top"
+            title="Are you sure to delete this user?"
+            onConfirm={() => handleConfirmDelete(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              danger
+              type="primary"
+              shape="round"
+              icon={<DeleteOutlined />}
+            />
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
+  return (
+    <Layout>
+      <Row justify="end" style={{ marginBottom: 10 }}>
+        <Col>
+          <Button type="primary" block>
+            <Link to="/add">Add User</Link>
+          </Button>
+        </Col>
+      </Row>
+      <Table
+        loading={isLoading}
+        columns={columns}
+        dataSource={data}
+        pagination={false}
+      />
+    </Layout>
+  );
+};
 
 export default UsersListingPage;

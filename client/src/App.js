@@ -2,6 +2,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 //pages
 import Users from "./pages/users";
 import UserForm from "./pages/users/UserForm";
+import NotFound from "./pages/NotFound";
+
 function App() {
   return (
     <BrowserRouter>
@@ -9,7 +11,7 @@ function App() {
         <Route path="/" element={<Users />} exact />
         <Route path="/add" element={<UserForm />} />
         <Route path="/edit/:id" element={<UserForm />} />
-        <Route element={() => <h2>Not Found</h2>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
